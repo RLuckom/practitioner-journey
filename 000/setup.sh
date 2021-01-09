@@ -11,6 +11,9 @@ snap install --classic aws-cli
 # change (or if we want to run it on local machines) everything that matters will stay the same.
 snap install docker
 
+# Wait five seconds so that docker has time to start up.
+sleep 5
+
 # This command builds the docker container according to a text script called a "Dockerfile" located in this directory
 docker build -t terraform -f Dockerfile .
 
