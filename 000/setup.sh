@@ -15,14 +15,14 @@ snap install docker
 docker build -t terraform -f Dockerfile .
 
 # Create a command for running terraform in docker
-echo 'docker run --rm -ti --user=$UID:nogroup -e "TF_LOG=$TF_LOG" -e "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION" -v $HOME/.aws:/.aws -v $HOME/.gcp:/.gcp -v $(pwd):/input --name terraform terraform $@' > /usr/local/bin/terraform
+echo 'sudo docker run --rm -ti --user=$UID:nogroup -e "TF_LOG=$TF_LOG" -e "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION" -v $HOME/.aws:/.aws -v $HOME/.gcp:/.gcp -v $(pwd):/input --name terraform terraform $@' > /usr/local/bin/terraform
 
 # Add permission for running the terraform command
 chmod +x /usr/local/bin/terraform
 
 # Next, we need to make a terraform config that tells terraform what bucket to use
 # to store its state
-echo "Enter the name of your terraform state bucket"
+echo "\n\n\nEnter the name of your terraform state bucket"
 read TERRAFORM_STATE_BUCKET
 cat <<EOF >  ./terraform/versions.tf
 provider "archive" {}
