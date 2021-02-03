@@ -2,6 +2,11 @@ variable domain_name {
   type = string
 }
 
+variable force_destroy {
+  type = bool
+  default = false
+}
+
 variable maintainer_name {
   type = string
   default = "Maintainer Name"
@@ -99,6 +104,7 @@ locals {
 module website {
   source = "github.com/RLuckom/terraform_modules//aws/serverless_site/tetrapod"
   maintainer = local.maintainer
+  force_destroy = var.force_destroy
   nav_links = local.nav_links
   site_title = local.site_title
   system_id = local.system_id
