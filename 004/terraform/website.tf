@@ -4,7 +4,7 @@ variable domain_name {
 
 variable force_destroy {
   type = bool
-  default = false
+  default = true
 }
 
 variable maintainer_name {
