@@ -101,28 +101,28 @@ locals {
   }
 }
 
-resource "aws_s3_bucket_object" "object" {
+resource "aws_s3_bucket_object" "posts_folder" {
   bucket = module.website.website_bucket_name
   key = "posts/"
   content = ""
   depends_on = [module.website]
 }
 
-resource "aws_s3_bucket_object" "object" {
+resource "aws_s3_bucket_object" "images_folder" {
   bucket = module.website.website_bucket_name
   key = "images/"
   content = ""
   depends_on = [module.website]
 }
 
-resource "aws_s3_bucket_object" "object" {
+resource "aws_s3_bucket_object" "state_diagram" {
   bucket = module.website.website_bucket_name
   key = "images/state_diagram.svg"
   source = "images/state_diagram.svg"
   depends_on = [module.website]
 }
 
-resource "aws_s3_bucket_object" "object" {
+resource "aws_s3_bucket_object" "test_post" {
   bucket = module.website.website_bucket_name
   key    = "posts/test_post.md"
   depends_on = [module.website]
