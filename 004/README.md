@@ -14,4 +14,6 @@ cd terraform/
 
 terraform init
 
-terraform apply -var='domain_name=privilege-physics.com'
+terraform apply -var='domain_name=privilege-physics.com' -var='twitter_handle=RLuckom' -var='linkedin_handle=raphaelluckom' -var='instagram_handle=RLuckom' -var='github_handle=RLuckom' -var='site_title=Test_Website'
+terraform destroy -var='domain_name=privilege-physics.com'
+

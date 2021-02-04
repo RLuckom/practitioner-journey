@@ -19,7 +19,7 @@ variable maintainer_email {
 
 variable site_title {
   type = string
-  default = "Test Website"
+  default = "Test_Website"
 }
 
 variable twitter_handle {
@@ -57,7 +57,7 @@ locals {
     name = var.maintainer_name
     email = var.maintainer_email
   }
-  site_title = var.site_title
+  site_title = replace(var.site_title, "_", " ")
   potential_nav_links = [
     {
       name = "Github"
