@@ -13,3 +13,5 @@ Wait for prompt, then enter bucket name
 cd terraform/
 
 terraform init
+
+terraform apply -var='domain_name=privilege-physics.com'

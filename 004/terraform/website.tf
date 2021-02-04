@@ -119,12 +119,14 @@ resource "aws_s3_bucket_object" "state_diagram" {
   bucket = module.website.website_bucket_name
   key = "images/state_diagram.svg"
   source = "images/state_diagram.svg"
+  content_type = "image/svg+xml"
   depends_on = [module.website]
 }
 
 resource "aws_s3_bucket_object" "test_post" {
   bucket = module.website.website_bucket_name
   key    = "posts/test_post.md"
+  content_type = "text/plain"
   depends_on = [module.website]
   content = <<EOF
 ---
