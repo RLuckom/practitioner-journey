@@ -5,6 +5,8 @@ RUN apt-get update && \
     curl -L -o terraform.zip https://releases.hashicorp.com/terraform/0.14.0/terraform_0.14.0_linux_amd64.zip && \
     unzip terraform.zip
 
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install
+
 WORKDIR /input
 
 USER nobody:nogroup
