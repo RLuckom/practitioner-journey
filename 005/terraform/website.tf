@@ -162,20 +162,20 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 module "aws_sdk" {
-  source = "github.com/RLuckom/terraform_modules//aws/layers/aws_sdk"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/aws_sdk?ref=snapshots"
 }
 
 module "donut_days" {
-  source = "github.com/RLuckom/terraform_modules//aws/layers/donut_days"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/donut_days?ref=snapshots"
 }
 
 
 module "image_dependencies" {
-  source = "github.com/RLuckom/terraform_modules//aws/layers/image_dependencies"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/image_dependencies?ref=snapshots"
 }
 
 module "markdown_tools" {
-  source = "github.com/RLuckom/terraform_modules//aws/layers/markdown_tools"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/markdown_tools?ref=snapshots"
 }
 
 locals {
@@ -184,7 +184,7 @@ locals {
 }
 
 module human_attention_archive {
-  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/replicated_archive"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/state/object_store/replicated_archive?ref=snapshots"
   account_id = local.account_id
   region = local.region
   providers = {
@@ -227,7 +227,7 @@ module admin_site_blog_plugin {
 }
 
 module admin_interface {
-  source = "github.com/RLuckom/terraform_modules//aws/serverless_site/derestreet"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/derestreet?ref=snapshots"
   account_id = local.account_id
   region = local.region
   system_id = module.visibility_system.serverless_site_configs["alpha_admin"].system_id
@@ -273,7 +273,7 @@ module admin_interface {
 }
 
 module visibility_system {
-  source = "github.com/RLuckom/terraform_modules//aws/visibility/aurochs"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/visibility/aurochs?ref=snapshots"
   account_id = local.account_id
   region = local.region
   cloudfront_delivery_bucket = "${local.bucket_prefix}-cloudfront-delivery"
