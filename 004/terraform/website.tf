@@ -181,7 +181,7 @@ EOF
 }
 
 module website {
-  source = "github.com/RLuckom/terraform_modules//aws/serverless_site/tetrapod?ref=188b4ea314b0a88cdcbdb523"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/tetrapod?ref=004-snapshot"
   maintainer = local.maintainer
   force_destroy = var.force_destroy
   nav_links = local.nav_links
