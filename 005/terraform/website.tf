@@ -162,20 +162,20 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 module "aws_sdk" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/aws_sdk?ref=89757f496551e05034807"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/aws_sdk?ref=1cd7ab702ad4bf26c6f2796c"
 }
 
 module "donut_days" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/donut_days?ref=89757f496551e05034807"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/donut_days?ref=1cd7ab702ad4bf26c6f2796c"
 }
 
 
 module "image_dependencies" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/image_dependencies?ref=89757f496551e05034807"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/image_dependencies?ref=1cd7ab702ad4bf26c6f2796c"
 }
 
 module "markdown_tools" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/markdown_tools?ref=89757f496551e05034807"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/markdown_tools?ref=1cd7ab702ad4bf26c6f2796c"
 }
 
 locals {
@@ -184,7 +184,7 @@ locals {
 }
 
 module human_attention_archive {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/state/object_store/replicated_archive?ref=89757f496551e05034807"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/state/object_store/replicated_archive?ref=1cd7ab702ad4bf26c6f2796c"
   account_id = local.account_id
   region = local.region
   providers = {
@@ -210,13 +210,13 @@ module human_attention_archive {
 }
 
 module admin_site_blog_plugin {
-  source = "github.com/RLuckom/raphaelluckom.com//terraform/modules/plugins/blog"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/plugins/blog?ref=1cd7ab702ad4bf26c6f2796c"
   name = "blog"
   region = local.region
   account_id = local.account_id
   admin_site_resources = module.admin_interface.site_resources
   coordinator_data = module.visibility_system.serverless_site_configs["alpha_blog"]
-  plugin_config = module.admin_interface.plugin_config["blog"]
+  plugin_config = module.admin_interface.plugin_config["alpha_blog"]
   maintainer = local.maintainer
   nav_links = local.nav_links
   site_title = var.site_title
@@ -227,7 +227,7 @@ module admin_site_blog_plugin {
 }
 
 module admin_interface {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/derestreet?ref=89757f496551e05034807"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/derestreet?ref=1cd7ab702ad4bf26c6f2796c"
   account_id = local.account_id
   region = local.region
   system_id = module.visibility_system.serverless_site_configs["alpha_admin"].system_id
@@ -235,11 +235,11 @@ module admin_interface {
   user_email = var.maintainer_email
   aws_sdk_layer = module.aws_sdk.layer_config
   plugin_static_configs = {
-    blog = module.admin_site_blog_plugin.static_config
+    alpha_blog = module.admin_site_blog_plugin.static_config
     visibility = module.admin_site_visibility_plugin.static_config
   }
   plugin_configs = {
-    blog = {
+    alpha_blog = {
       additional_connect_sources = module.admin_site_blog_plugin.additional_connect_sources_required
       additional_style_sources = []
       policy_statements = []
@@ -272,17 +272,20 @@ module admin_interface {
 }
 
 module visibility_system {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/visibility/aurochs?ref=89757f496551e05034807"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/visibility/aurochs?ref=1cd7ab702ad4bf26c6f2796c"
   account_id = local.account_id
   region = local.region
+  bucket_prefix = local.bucket_prefix
   cloudfront_delivery_bucket = "${local.bucket_prefix}-cloudfront-delivery"
   visibility_data_bucket = "${local.bucket_prefix}-visibility-data"
   donut_days_layer = module.donut_days.layer_config
   supported_system_definitions = var.supported_system_definitions
   supported_system_clients = {
     alpha = {
+      function_metric_table_read_role_names = []
       subsystems = {
         alpha_admin = {
+          site_metric_table_read_role_name_map = {}
           scoped_logging_functions = concat(module.admin_site_blog_plugin.lambda_logging_arns)
           glue_permission_name_map = {
             add_partition_permission_names = []
@@ -292,6 +295,9 @@ module visibility_system {
           }
         }
         alpha_blog = {
+          site_metric_table_read_role_name_map = {
+            alpha_blog = [module.admin_interface.plugin_authenticated_roles["alpha_blog"].name]
+          }
           scoped_logging_functions = concat(module.admin_site_blog_plugin.lambda_logging_arns)
           glue_permission_name_map = {
             add_partition_permission_names = []
@@ -301,6 +307,7 @@ module visibility_system {
           }
         }
         human = {
+          site_metric_table_read_role_name_map = {}
           scoped_logging_functions = concat(module.human_attention_archive.lambda_logging_roles)
           glue_permission_name_map = {
             add_partition_permission_names = []
@@ -315,10 +322,13 @@ module visibility_system {
 }
 
 module admin_site_visibility_plugin {
-  source = "github.com/RLuckom/raphaelluckom.com//terraform/modules/plugins/visibility"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/plugins/visibility?ref=1cd7ab702ad4bf26c6f2796c"
   name = "visibility"
   account_id = local.account_id
   region = local.region
   admin_site_resources = module.admin_interface.site_resources
+  data_warehouse_configs = module.visibility_system.data_warehouse_configs
+  serverless_site_configs = module.visibility_system.serverless_site_configs
+  cost_report_summary_location = module.visibility_system.cost_report_summary_location
   plugin_config = module.admin_interface.plugin_config["visibility"]
 }
