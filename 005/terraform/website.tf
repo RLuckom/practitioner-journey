@@ -65,6 +65,7 @@ variable subsystem_name {
 }
 
 locals {
+  unique_suffix = "2ae"
   maintainer = {
     name = var.maintainer_name
     email = var.maintainer_email
@@ -113,28 +114,39 @@ locals {
   }
 }
 
-variable supported_system_definitions {
-  type = map(object({
-    subsystems = map(object({
-      serverless_site_configs = map(object({
-        route53_zone_name = string
-        domain_parts = object({
-          top_level_domain = string
-          controlled_domain_part = string
-        })
-      }))
-    }))
-  }))
-  default = {
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
+module "aws_sdk" {
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/aws_sdk?ref=9361e18a47d"
+}
+
+module "donut_days" {
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/donut_days?ref=9361e18a47d"
+}
+
+
+module "image_dependencies" {
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/image_dependencies?ref=9361e18a47d"
+}
+
+module "markdown_tools" {
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/markdown_tools?ref=9361e18a47d"
+}
+
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+  region = data.aws_region.current.name
+  supported_system_definitions = {
     alpha = {
       subsystems = {
         alpha_admin = {
           serverless_site_configs = {
             alpha_admin = {
-              route53_zone_name = "raphaelluckom.com."
+              route53_zone_name = "${var.domain_name}."
               domain_parts = {
-                top_level_domain = "com"
-                controlled_domain_part = "admin.raphaelluckom"
+                top_level_domain = split(".", var.domain_name)[length(split(".", var.domain_name)) -1]
+                controlled_domain_part = "admin.${join(".", slice(split(".", var.domain_name), 0, length(split(".", var.domain_name)) - 1))}"
               }
             }
           }
@@ -145,10 +157,10 @@ variable supported_system_definitions {
         alpha_blog = {
           serverless_site_configs = {
             alpha_blog = {
-              route53_zone_name = "raphaelluckom.com."
+              route53_zone_name = "${var.domain_name}."
               domain_parts = {
-                top_level_domain = "com"
-                controlled_domain_part = "test.raphaelluckom"
+                top_level_domain = split(".", var.domain_name)[length(split(".", var.domain_name)) -1]
+                controlled_domain_part = join(".", slice(split(".", var.domain_name), 0, length(split(".", var.domain_name)) - 1))
               }
             }
           }
@@ -158,34 +170,11 @@ variable supported_system_definitions {
   }
 }
 
-data "aws_caller_identity" "current" {}
-data "aws_region" "current" {}
-
-module "aws_sdk" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/aws_sdk?ref=1cd7ab702ad4bf26c6f2796c"
-}
-
-module "donut_days" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/donut_days?ref=1cd7ab702ad4bf26c6f2796c"
-}
-
-
-module "image_dependencies" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/image_dependencies?ref=1cd7ab702ad4bf26c6f2796c"
-}
-
-module "markdown_tools" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/markdown_tools?ref=1cd7ab702ad4bf26c6f2796c"
-}
-
-locals {
-  account_id = data.aws_caller_identity.current.account_id
-  region = data.aws_region.current.name
-}
-
 module human_attention_archive {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/state/object_store/replicated_archive?ref=1cd7ab702ad4bf26c6f2796c"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/state/object_store/replicated_archive?ref=9361e18a47d"
+  unique_suffix = local.unique_suffix
   account_id = local.account_id
+  really_allow_delete = true
   region = local.region
   providers = {
     aws.replica1 = aws.frankfurt
@@ -210,7 +199,8 @@ module human_attention_archive {
 }
 
 module admin_site_blog_plugin {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/plugins/blog?ref=1cd7ab702ad4bf26c6f2796c"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/plugins/blog?ref=9361e18a47d"
+  unique_suffix = local.unique_suffix
   name = "blog"
   region = local.region
   account_id = local.account_id
@@ -227,7 +217,8 @@ module admin_site_blog_plugin {
 }
 
 module admin_interface {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/derestreet?ref=1cd7ab702ad4bf26c6f2796c"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/derestreet?ref=9361e18a47d"
+  unique_suffix = local.unique_suffix
   account_id = local.account_id
   region = local.region
   system_id = module.visibility_system.serverless_site_configs["alpha_admin"].system_id
@@ -252,7 +243,7 @@ module admin_interface {
       file_configs = module.admin_site_blog_plugin.files
     }
     visibility = {
-      additional_connect_sources = []
+      additional_connect_sources = module.admin_site_visibility_plugin.additional_connect_sources_required
       additional_style_sources = []
       policy_statements = []
       plugin_relative_lambda_origins = []
@@ -272,14 +263,24 @@ module admin_interface {
 }
 
 module visibility_system {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/visibility/aurochs?ref=1cd7ab702ad4bf26c6f2796c"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/visibility/aurochs?ref=9361e18a47d"
+  unique_suffix = local.unique_suffix
+  allow_bucket_delete = true
   account_id = local.account_id
   region = local.region
   bucket_prefix = local.bucket_prefix
-  cloudfront_delivery_bucket = "${local.bucket_prefix}-cloudfront-delivery"
-  visibility_data_bucket = "${local.bucket_prefix}-visibility-data"
   donut_days_layer = module.donut_days.layer_config
-  supported_system_definitions = var.supported_system_definitions
+  supported_system_definitions = local.supported_system_definitions
+  cost_report_summary_reader_arns = [
+    module.admin_interface.plugin_authenticated_roles["visibility"].arn
+  ]
+  visibility_bucket_cors_rules = [{
+    allowed_headers = ["authorization", "content-md5", "content-type", "cache-control", "x-amz-content-sha256", "x-amz-date", "x-amz-security-token", "x-amz-user-agent"]
+    allowed_methods = ["GET"]
+    allowed_origins = ["https://${module.admin_interface.website_config.domain}"]
+    expose_headers = ["ETag"]
+    max_age_seconds = 3000
+  }]
   supported_system_clients = {
     alpha = {
       function_metric_table_read_role_names = []
@@ -322,7 +323,8 @@ module visibility_system {
 }
 
 module admin_site_visibility_plugin {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/plugins/visibility?ref=1cd7ab702ad4bf26c6f2796c"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/plugins/visibility?ref=9361e18a47d"
+  unique_suffix = local.unique_suffix
   name = "visibility"
   account_id = local.account_id
   region = local.region
