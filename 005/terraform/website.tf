@@ -118,20 +118,20 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 module "aws_sdk" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/aws_sdk?ref=b5bfe1ef605186"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/aws_sdk?ref=13e8dc42a4ed181a7"
 }
 
 module "donut_days" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/donut_days?ref=b5bfe1ef605186"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/donut_days?ref=13e8dc42a4ed181a7"
 }
 
 
 module "image_dependencies" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/image_dependencies?ref=b5bfe1ef605186"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/image_dependencies?ref=13e8dc42a4ed181a7"
 }
 
 module "markdown_tools" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/markdown_tools?ref=b5bfe1ef605186"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/markdown_tools?ref=13e8dc42a4ed181a7"
 }
 
 locals {
@@ -171,7 +171,7 @@ locals {
 }
 
 module human_attention_archive {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/state/object_store/replicated_archive?ref=b5bfe1ef605186"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/state/object_store/replicated_archive?ref=13e8dc42a4ed181a7"
   unique_suffix = local.unique_suffix
   account_id = local.account_id
   really_allow_delete = var.allow_delete_buckets
@@ -199,7 +199,7 @@ module human_attention_archive {
 }
 
 module admin_site_blog_plugin {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/plugins/blog?ref=b5bfe1ef605186"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/plugins/blog?ref=13e8dc42a4ed181a7"
   unique_suffix = local.unique_suffix
   name = "blog"
   region = local.region
@@ -218,7 +218,7 @@ module admin_site_blog_plugin {
 }
 
 module admin_interface {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/derestreet?ref=b5bfe1ef605186"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/derestreet?ref=13e8dc42a4ed181a7"
   unique_suffix = local.unique_suffix
   account_id = local.account_id
   region = local.region
@@ -265,7 +265,7 @@ module admin_interface {
 }
 
 module visibility_system {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/visibility/aurochs?ref=b5bfe1ef605186"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/visibility/aurochs?ref=13e8dc42a4ed181a7"
   unique_suffix = local.unique_suffix
   allow_bucket_delete = var.allow_delete_buckets
   account_id = local.account_id
@@ -325,7 +325,7 @@ module visibility_system {
 }
 
 module admin_site_visibility_plugin {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/plugins/visibility?ref=b5bfe1ef605186"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/plugins/visibility?ref=13e8dc42a4ed181a7"
   unique_suffix = local.unique_suffix
   name = "visibility"
   account_id = local.account_id
