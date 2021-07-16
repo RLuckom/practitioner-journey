@@ -4,7 +4,7 @@
 
 git clone https://github.com/RLuckom/practitioner-journey.git
 
-cd practitioner-journey/004/
+cd practitioner-journey/005/
 
 sudo ./setup.sh
 
