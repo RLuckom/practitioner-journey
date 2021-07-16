@@ -29,8 +29,6 @@ chmod +x /usr/local/bin/terraform
 # to store its state
 echo "\n\n\nEnter the name of your terraform state bucket"
 read TERRAFORM_STATE_BUCKET
-echo "\n\n\nEnter a short, unique name for this stack (no spaces, numbers, or special characters)"
-read TERRAFORM_STATE_UNIQUE_KEY
 cat <<EOF >  ./terraform/versions.tf
 provider "archive" {}
 
@@ -69,7 +67,7 @@ terraform {
   backend "s3" {
     shared_credentials_file = "/.aws/credentials"
     bucket = "$TERRAFORM_STATE_BUCKET"
-    key    = "demo_alpha_$TERRAFORM_STATE_UNIQUE_KEY"
+    key    = "demo_alpha"
     region = "us-east-1"
     profile    = "default"
   }
