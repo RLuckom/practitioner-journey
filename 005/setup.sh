@@ -1,4 +1,6 @@
 #!/usr/bin/sh
+REGION=`curl http://169.254.169.254/latest/dynamic/instance-identity/document|grep region|awk -F\" '{print $4}'`
+
 
 # "set -e" means to exit if there are errors
 set -e
@@ -18,7 +20,7 @@ sleep 5
 docker build -t terraform -f Dockerfile .
 
 # Create a command for running terraform in docker
-echo 'sudo docker run --rm -ti --user=$UID:nogroup -e "TF_LOG=$TF_LOG" -e "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION" -v $HOME/.aws:/.aws -v $HOME/.gcp:/.gcp -v $(pwd):/input --name terraform terraform $@' > /usr/local/bin/terraform
+echo 'sudo docker run --rm -ti --user=$UID:nogroup -e "TF_LOG=$TF_LOG" -e "AWS_DEFAULT_REGION='$REGION'" -v $HOME/.aws:/.aws -v $HOME/.gcp:/.gcp -v $(pwd):/input --name terraform terraform $@' > /usr/local/bin/terraform
 
 # Add permission for running the terraform command
 chmod +x /usr/local/bin/terraform
