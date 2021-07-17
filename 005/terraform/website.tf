@@ -118,20 +118,20 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 module "aws_sdk" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/aws_sdk?ref=9d58fd5754bab78ea0a"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/aws_sdk?ref=7dd7e42b35c71"
 }
 
 module "donut_days" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/donut_days?ref=9d58fd5754bab78ea0a"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/donut_days?ref=7dd7e42b35c71"
 }
 
 
 module "image_dependencies" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/image_dependencies?ref=9d58fd5754bab78ea0a"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/image_dependencies?ref=7dd7e42b35c71"
 }
 
 module "markdown_tools" {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/markdown_tools?ref=9d58fd5754bab78ea0a"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/layers/markdown_tools?ref=7dd7e42b35c71"
 }
 
 resource "aws_s3_bucket_object" "test_post" {
@@ -143,7 +143,8 @@ resource "aws_s3_bucket_object" "test_post" {
 ---
 title: "Test Post"
 author: "System"
-date: 2021-02-03T12:00:00
+date: '2021-07-16T21:55:43.141Z'
+createDate: '2021-07-16T21:55:43.141Z'
 meta:
   trail:
     - test
@@ -216,7 +217,7 @@ locals {
 }
 
 module human_attention_archive {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/state/object_store/replicated_archive?ref=9d58fd5754bab78ea0a"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/state/object_store/replicated_archive?ref=7dd7e42b35c71"
   unique_suffix = local.unique_suffix
   account_id = local.account_id
   really_allow_delete = var.allow_delete_buckets
@@ -244,7 +245,7 @@ module human_attention_archive {
 }
 
 module admin_site_blog_plugin {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/plugins/blog?ref=9d58fd5754bab78ea0a"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/plugins/blog?ref=7dd7e42b35c71"
   unique_suffix = local.unique_suffix
   name = "blog"
   region = local.region
@@ -263,7 +264,7 @@ module admin_site_blog_plugin {
 }
 
 module admin_interface {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/derestreet?ref=9d58fd5754bab78ea0a"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/derestreet?ref=7dd7e42b35c71"
   unique_suffix = local.unique_suffix
   account_id = local.account_id
   region = local.region
@@ -310,7 +311,7 @@ module admin_interface {
 }
 
 module visibility_system {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/visibility/aurochs?ref=9d58fd5754bab78ea0a"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/visibility/aurochs?ref=7dd7e42b35c71"
   unique_suffix = local.unique_suffix
   allow_bucket_delete = var.allow_delete_buckets
   account_id = local.account_id
@@ -370,7 +371,7 @@ module visibility_system {
 }
 
 module admin_site_visibility_plugin {
-  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/plugins/visibility?ref=9d58fd5754bab78ea0a"
+  source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/plugins/visibility?ref=7dd7e42b35c71"
   unique_suffix = local.unique_suffix
   name = "visibility"
   account_id = local.account_id
