@@ -149,6 +149,7 @@ meta:
   trail:
     - test
     - cloud
+publish: true
 ---
 
 ## Main Heading
@@ -162,8 +163,6 @@ on first deployment.
 _This is italic text_
 
 __This is bold text__
-
-This text has a footnote[^1].
 
 This is a numbered list:
 
