@@ -250,7 +250,7 @@ module admin_site_blog_plugin {
   plugin_config = module.admin_interface.plugin_config["alpha_blog"]
   maintainer = local.maintainer
   nav_links = local.nav_links
-  site_title = var.site_title
+  site_title = local.site_title
   logging_config = module.visibility_system.lambda_log_configs["alpha"]["human"].config
   image_layer = module.image_dependencies.layer_config
   donut_days_layer = module.donut_days.layer_config
