@@ -241,7 +241,7 @@ module human_attention_archive {
 module admin_site_blog_plugin {
   source = "github.com/RLuckom/terraform_modules//snapshots/aws/serverless_site/plugins/blog?ref=9f5bf4319f1ac"
   unique_suffix = local.unique_suffix
-  name = "blog"
+  name = "alpha_blog"
   region = local.region
   allow_delete_buckets = var.allow_delete_buckets
   account_id = local.account_id
